@@ -17,10 +17,17 @@
 typedef unsigned char BYTE;
 using namespace std;
 
-string filePath = "/Users/jclu/eclipse-workspace/cacheSimulator/src/test2.txt";
+string filePath = "/Users/jclu/eclipse-workspace/cacheSimulator/src/test1.txt";
 
-int main() {
-	cout << "Begins..." << endl; // begins
+int main(int argc, char* argv[]) {
+	if(argc > 2){
+		cout<<"Args wrong!"<<endl;
+		return 0;
+	}
+	if(argc==2){
+		filePath = argv[1];
+	}
+	cout << "Begins..." <<argc<< endl; // begins
 
 	// main function start
     int totalTraces = 0;
@@ -72,8 +79,8 @@ int main() {
 			}
             result==SUCCESS?numberOfhit++:numberOfMiss++;
 //            j--;
-            string a=result==SUCCESS?"hit":"miss";
-            cout<<a<<endl;
+//            string a=result==SUCCESS?"hit":"miss";
+//            cout<<a<<endl;
 		}
 		delete[] buffer32;
 		delete[] buffer;

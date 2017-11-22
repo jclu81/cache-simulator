@@ -16,7 +16,7 @@ Cache::Cache() {
 	this->offsetSize = 4; // log(blockSize)
 	this->tagSize = 11; // 32 - indexSize-offsetSize
 	cout << "Cache's construction function: create all blocks" << endl;
-	this->block = new Block[pow(2,indexSize) * associativity];
+	this->block = new Block[int(pow(2,indexSize) * associativity)];
 	this->mRU = new char[32];
 	this->lRU = new char[32];
 //	this->addressSize = 32; //32 bits
