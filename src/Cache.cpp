@@ -4,9 +4,9 @@
  *  Created on: Nov 19, 2017
  *      Author: jclu
  */
-
 #include "Cache.h"
-
+#include "string.h"
+using std::bitset;
 Cache::Cache() {
 	// TODO Auto-generated constructor stub
 	this->cacheSize = 4096 * 1024; //4096KB
@@ -16,7 +16,7 @@ Cache::Cache() {
 	this->offsetSize = 4; // log(blockSize)
 	this->tagSize = 11; // 32 - indexSize-offsetSize
 	cout << "Cache's construction function: create all blocks" << endl;
-	this->block = new Block[int(pow(2,indexSize) * associativity)];
+	this->block = new Block[int(pow(2, indexSize) * associativity)];
 	this->mRU = new char[32];
 	this->lRU = new char[32];
 //	this->addressSize = 32; //32 bits
@@ -31,8 +31,12 @@ Cache::Cache() {
 //	this->addressSize = addressSize; //32 bits
 //}
 int Cache::readCache(char* addressChar) {
-	bitset<32> addressBit(addressChar);
-	string adds = addressBit.to_string('0','1');
+	string addressString(addressChar);
+	bitset<32> addressBit(addressString);
+
+	bitset<32> add;
+
+	string adds = addressBit.to_string('0', '1');
 	char *tag = new char[tagSize];
 	char *index = new char[indexSize];
 	char *offset = new char[offsetSize];
@@ -45,7 +49,8 @@ int Cache::readCache(char* addressChar) {
 //	cout << tag << endl << index1 << endl << offset1 << endl;
 
 	//find line by index
-	bitset<17> indexBit(index);
+	string indexString(index);
+	bitset<17> indexBit(indexString);
 	int indexInt = (int) indexBit.to_ulong() * 2;
 	Block *destBlock;
 	int hitInt = 0;
@@ -53,7 +58,7 @@ int Cache::readCache(char* addressChar) {
 	int lruInt = 0;
 
 	int assi;
-    bool isHit = false;
+	bool isHit = false;
 	for (assi = 0; assi < this->associativity; assi++) {
 		destBlock = &this->block[indexInt + assi];
 		//compare valid bit
@@ -61,8 +66,8 @@ int Cache::readCache(char* addressChar) {
 		//occupied
 		if (destBlock->getValidBit()) {
 			//compare tag
-            if (!strcmp(destBlock->getTag(), tag)) {
-                isHit = true;
+			if (!strcmp(destBlock->getTag(), tag)) {
+				isHit = true;
 				hitInt = indexInt + assi;
 			}
 		}
@@ -90,7 +95,6 @@ int Cache::readCache(char* addressChar) {
 		//miss
 		//read block from memory and replace the LRU block, move MRU to LRU
 
-
 		this->block[lruInt].setTag(tag);
 		this->block[lruInt].setValidBit(true);
 		//set data
@@ -102,71 +106,72 @@ int Cache::readCache(char* addressChar) {
 	delete[] tag;
 	delete[] index;
 	delete[] offset;
-    return isHit?SUCCESS:FAIL;
+	return isHit ? SUCCESS : FAIL;
 }
 
 int Cache::wirteCache(char* addressChar) {
-    bitset<32> addressBit(addressChar);
-    string adds = addressBit.to_string('0','1');
-    
-    //find line by index
-    bitset<11> tagBit(adds,0,11);
-    bitset<17> indexBit(adds,11,17);
-    bitset<4> offsetBit(adds,28,4);
-    char *tag = new char[11];
-    strcpy(tag, tagBit.to_string().c_str());
-    int indexInt = (int) indexBit.to_ulong() * 2;
-    Block *destBlock;
-    int hitInt = 0;
-    int mruInt = indexInt;
-    int lruInt = 0;
-    
-    int assi;
-    bool isHit = false;
-    for (assi = 0; assi < this->associativity; assi++) {
-        destBlock = &this->block[indexInt + assi];
-        //compare valid bit
-        
-        //occupied
-        if (destBlock->getValidBit()) {
-            //compare tag
-            if (!strcmp(destBlock->getTag(), tag)) {
-                isHit = true;
-                hitInt = indexInt + assi;
-            }
-        }
-        // find MRU and LRU
-        if (destBlock->getIsLru()) {
-            lruInt = indexInt + assi;
-        } else {
-            mruInt = indexInt + assi;
-        }
-    }
-    
-    if (isHit) {
-        //hit
-        //write block set MRU then set MRU to LRU
-        if (hitInt != mruInt) {
-            destBlock = &this->block[hitInt];
-            destBlock->setIsLru(false);
-            destBlock = &this->block[mruInt];
-            destBlock->setIsLru(true);
-        }
-        //write cache and memary
-    } else {
-        //miss
-        //write memary then take block from memory and replace the LRU block, move MRU to LRU
-        
-        this->block[lruInt].setTag(tag);
-        this->block[lruInt].setValidBit(true);
-        //set data
-        this->block[lruInt].setIsLru(false);
-        
-        destBlock = &this->block[mruInt];
-        destBlock->setIsLru(true);
-    }
-    delete[] tag;
-    return isHit?SUCCESS:FAIL;
+	string addressString(addressChar);
+	bitset<32> addressBit(addressString);
+	string adds = addressBit.to_string('0', '1');
+
+	//find line by index
+	bitset<11> tagBit(adds, 0, 11);
+	bitset<17> indexBit(adds, 11, 17);
+	bitset<4> offsetBit(adds, 28, 4);
+	char *tag = new char[11];
+	strcpy(tag, tagBit.to_string().c_str());
+	int indexInt = (int) indexBit.to_ulong() * 2;
+	Block *destBlock;
+	int hitInt = 0;
+	int mruInt = indexInt;
+	int lruInt = 0;
+
+	int assi;
+	bool isHit = false;
+	for (assi = 0; assi < this->associativity; assi++) {
+		destBlock = &this->block[indexInt + assi];
+		//compare valid bit
+
+		//occupied
+		if (destBlock->getValidBit()) {
+			//compare tag
+			if (!strcmp(destBlock->getTag(), tag)) {
+				isHit = true;
+				hitInt = indexInt + assi;
+			}
+		}
+		// find MRU and LRU
+		if (destBlock->getIsLru()) {
+			lruInt = indexInt + assi;
+		} else {
+			mruInt = indexInt + assi;
+		}
+	}
+
+	if (isHit) {
+		//hit
+		//write block set MRU then set MRU to LRU
+		if (hitInt != mruInt) {
+			destBlock = &this->block[hitInt];
+			destBlock->setIsLru(false);
+			destBlock = &this->block[mruInt];
+			destBlock->setIsLru(true);
+		}
+		//write cache and memary
+	} else {
+		//miss
+		//write memary then take block from memory and replace the LRU block, move MRU to LRU
+
+		this->block[lruInt].setTag(tag);
+		this->block[lruInt].setValidBit(true);
+		//set data
+		this->block[lruInt].setIsLru(false);
+
+		destBlock = &this->block[mruInt];
+		destBlock->setIsLru(true);
+	}
+	delete[] tag;
+	return isHit ? SUCCESS : FAIL;
 }
 Cache::~Cache() {
 	// TODO Auto-generated destructor stub

@@ -17,7 +17,7 @@
 typedef unsigned char BYTE;
 using namespace std;
 
-string filePath = "/Users/jclu/eclipse-workspace/cacheSimulator/src/test1.txt";
+char* filePath = "/Users/jclu/eclipse-workspace/cacheSimulator/src/test1.txt";
 
 int main(int argc, char* argv[]) {
 	if(argc > 2){
@@ -41,6 +41,7 @@ int main(int argc, char* argv[]) {
 	ifstream iFile;
 
 	iFile.open(filePath, ios::in);
+//	iFile.open("", ios::in);
 	if (!iFile.is_open()) {
 		cout << "open fail!";
 	} else {

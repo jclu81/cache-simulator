@@ -8,6 +8,8 @@
 #ifndef BLOCK_H_
 #define BLOCK_H_
 #include<bitset>
+#include<stdio.h>
+#include<malloc.h>
 #define sizeOfTag 11
 class Block {
 private:
@@ -21,7 +23,8 @@ public:
 	Block() {
 		this->blockSize = 16;
 		this->validBit = false;
-		data = (char*) malloc(sizeof(char));
+		data = (char*)malloc(sizeof(char));
+
 		tag=(char*) malloc(sizeof(char) * 11);
 		isLru = true;
 //		isMru = true;
