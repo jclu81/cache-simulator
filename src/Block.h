@@ -23,8 +23,7 @@ public:
 	Block() {
 		this->blockSize = 16;
 		this->validBit = false;
-		data = (char*)malloc(sizeof(char));
-
+		data = "";
 		tag=(char*) malloc(sizeof(char) * 11);
 		isLru = true;
 //		isMru = true;
@@ -72,7 +71,8 @@ public:
 
 	virtual ~Block() {
 //        if (data != NULL) {
-			free(data);
+//			free(data);
+			free(tag);
 //        }
 	}
 };
