@@ -1,4 +1,4 @@
-## cacheSimulator(cs250p HW4)
+## cache-simulator(cs250p HW4)
 
 #### Requirement
 
